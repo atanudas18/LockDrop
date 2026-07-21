@@ -1,57 +1,95 @@
-# LockDrop
+<div align="center">
+
+# 🔒 LockDrop
 
 **Secure File Sharing Without Accounts**
 
-Upload a file, folder, or a batch of files, protect it with a password and an
-expiry, then share the password. No sign up, no login, no accounts — ever.
+Upload a file, folder, or a batch of files, protect it with a password and an expiry, then share the password. No sign up, no login, no accounts — ever.
 
-## Tech Stack
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen?style=for-the-badge)](https://mylockdrop.vercel.app)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Made with React](https://img.shields.io/badge/frontend-React-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![Made with Node](https://img.shields.io/badge/backend-Node.js-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
 
-- **Frontend:** React + Vite, Tailwind CSS, Framer Motion, React Router, Axios, react-hot-toast
-- **Backend:** Node.js, Express, MongoDB (Atlas), Cloudinary, Multer, Archiver, Helmet, CORS, express-rate-limit, bcrypt, node-cron
-- **Deploy:** Frontend → Vercel · Backend → Render · DB → MongoDB Atlas · Storage → Cloudinary
+[🔗 Live Site](https://mylockdrop.vercel.app) · [🐞 Report a Bug](https://github.com/atanudas18/LockDrop/issues) · [✨ Request a Feature](https://github.com/atanudas18/LockDrop/issues)
 
-## Project Structure
+</div>
+
+---
+
+## 📑 Table of Contents
+
+| | | |
+|---|---|---|
+| [✨ Features](#-features) | [🧰 Tech Stack](#-tech-stack) | [📂 Project Structure](#-project-structure) |
+| [⚙️ How It Works](#️-how-it-works) | [🚀 Local Setup](#-local-setup) | [☁️ Deployment](#️-deployment) |
+| [🔑 Environment Variables](#-environment-variables) | [📡 API Reference](#-api-reference) | [🛡️ Security Notes](#️-security-notes) |
+
+---
+
+## ✨ Features
+
+| Feature | Description |
+|---|---|
+| 🔐 Password Protection | Every upload is locked behind a password — hashed with bcrypt, never stored in plain text |
+| 📁 Folder Uploads | Drag & drop an entire folder — it's zipped securely on the backend |
+| ⏳ Auto-Expiry | Set an expiry (1 hour → custom date); files self-destruct automatically |
+| 🙈 No Accounts | No sign up, no login — the password itself is the access key |
+| ⚡ Fast & Lightweight | React + Vite frontend, Express backend, zero bloat |
+| 🧹 Auto-Cleanup | A cron job sweeps expired files every 5 minutes — nothing lingers |
+
+---
+
+## 🧰 Tech Stack
+
+<div align="center">
+
+| Layer | Stack |
+|---|---|
+| **Frontend** | ![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=black) ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-06B6D4?logo=tailwindcss&logoColor=white) ![Framer Motion](https://img.shields.io/badge/Framer_Motion-black?logo=framer&logoColor=white) |
+| **Backend** | ![Node.js](https://img.shields.io/badge/Node.js-339933?logo=node.js&logoColor=white) ![Express](https://img.shields.io/badge/Express-black?logo=express&logoColor=white) ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white) |
+| **Storage / Infra** | ![Cloudinary](https://img.shields.io/badge/Cloudinary-3448C5?logo=cloudinary&logoColor=white) ![Vercel](https://img.shields.io/badge/Vercel-black?logo=vercel&logoColor=white) ![Render](https://img.shields.io/badge/Render-46E3B7?logo=render&logoColor=white) |
+
+</div>
+
+---
+
+## 📂 Project Structure
 
 ```
 lockdrop/
-  backend/
-    config/          # MongoDB + Cloudinary connection setup
-    models/          # Upload.js mongoose schema
-    middleware/       # rate limiting, error handling
-    routes/           # upload.js, verify.js, download.js
-    utils/            # sanitize, zip, cron cleanup
-    server.js
-  frontend/
-    src/
-      api/            # axios instance
-      components/     # Navbar, Footer, Puppy, GradientBackground, ProgressBar
-      pages/           # Home, Upload, Download
-      App.jsx
-    index.html
-  README.md
-  .env.example (see backend/ and frontend/ for the actual files)
+├── backend/
+│   ├── config/          # MongoDB + Cloudinary connection setup
+│   ├── models/          # Upload.js mongoose schema
+│   ├── middleware/      # rate limiting, error handling
+│   ├── routes/          # upload.js, verify.js, download.js
+│   ├── utils/           # sanitize, zip, cron cleanup
+│   └── server.js
+├── frontend/
+│   ├── src/
+│   │   ├── api/          # axios instance
+│   │   ├── components/   # Navbar, Footer, Puppy, GradientBackground, ProgressBar
+│   │   ├── pages/         # Home, Upload, Download
+│   │   └── App.jsx
+│   ├── public/            # favicon, og-image, apple-touch-icon
+│   ├── index.html
+│   └── vercel.json
+└── README.md
 ```
 
-## How It Works
+---
 
-1. **Upload** — pick a file, multiple files, or a whole folder (folders are
-   zipped securely on the backend using `archiver`),
-   set a password and an expiry, and upload. The password is hashed with
-   bcrypt before it ever touches the database — never stored in plain text.
-2. **Download** — anyone with the password opens `/download`, enters it, and
-   if it matches an active upload, sees the file's metadata (name, size,
-   type, upload date, expiry, download count) with a button to download.
-3. **Auto-delete** — a `node-cron` job sweeps every 5 minutes for uploads
-   past their `expiresAt`, deletes the asset from Cloudinary, then removes
-   the MongoDB document. No manual cleanup required.
+## ⚙️ How It Works
 
-Because there are no user accounts, the **password itself is the lookup
-key** — `/verify` checks the submitted password against all active
-(non-expired) uploads' bcrypt hashes to find a match. At upload time, the
-same check enforces password uniqueness across active uploads.
+1. **Upload** — pick a file, multiple files, or a whole folder (folders are zipped securely on the backend using `archiver`), set a password and an expiry, and upload. The password is hashed with bcrypt before it ever touches the database.
+2. **Download** — anyone with the password opens `/download`, enters it, and if it matches an active upload, sees the file's metadata (name, size, type, upload date, expiry, download count) with a button to download.
+3. **Auto-delete** — a `node-cron` job sweeps every 5 minutes for uploads past their `expiresAt`, deletes the asset from Cloudinary, then removes the MongoDB document.
 
-## Local Setup
+> Because there are no user accounts, the **password itself is the lookup key** — `/verify` checks the submitted password against all active (non-expired) uploads' bcrypt hashes to find a match.
+
+---
+
+## 🚀 Local Setup
 
 ### 1. Backend
 
@@ -62,8 +100,7 @@ cp .env.example .env
 # fill in MONGO_URI, CLOUDINARY_* credentials in .env
 npm run dev
 ```
-
-Backend runs on `http://localhost:5000` by default.
+Runs on `http://localhost:5000`
 
 ### 2. Frontend
 
@@ -74,45 +111,41 @@ cp .env.example .env
 # VITE_API_URL should point at your backend, e.g. http://localhost:5000
 npm run dev
 ```
+Runs on `http://localhost:5173`
 
-Frontend runs on `http://localhost:5173` by default.
+<details>
+<summary>📦 MongoDB Atlas Setup</summary>
 
-## MongoDB Atlas Setup
-
-1. Create a free cluster at https://www.mongodb.com/cloud/atlas
+1. Create a free cluster at [mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas)
 2. Create a database user and allow network access (or `0.0.0.0/0` for testing)
-3. Copy the connection string into `backend/.env` as `MONGO_URI`, replacing
-   the username/password placeholders, and set a database name (e.g. `lockdrop`)
+3. Copy the connection string into `backend/.env` as `MONGO_URI`
 
-## Cloudinary Setup
+</details>
 
-1. Create a free account at https://cloudinary.com
+<details>
+<summary>☁️ Cloudinary Setup</summary>
+
+1. Create a free account at [cloudinary.com](https://cloudinary.com)
 2. From the dashboard, copy `Cloud Name`, `API Key`, and `API Secret`
-3. Put them into `backend/.env` as `CLOUDINARY_CLOUD_NAME`,
-   `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
-4. Files are uploaded as `resource_type: raw` under the `lockdrop/` folder
+3. Put them into `backend/.env` as `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
 
-## Deployment
+</details>
 
-### Backend → Render
+---
 
-1. Push this repo to GitHub
-2. New Web Service on Render, point it at `backend/`
-3. Build command: `npm install` · Start command: `npm start`
-4. Add all variables from `backend/.env.example` in Render's environment settings
-5. Set `CLIENT_URL` to your deployed frontend URL (for CORS)
+## ☁️ Deployment
 
-### Frontend → Vercel
+| | Platform | Steps |
+|---|---|---|
+| **Backend** | Render | Push to GitHub → New Web Service → root `backend/` → Build: `npm install` → Start: `npm start` → add env vars → set `CLIENT_URL` to your frontend URL |
+| **Frontend** | Vercel | New Project → root `frontend/` → Framework: Vite → add `VITE_API_URL` env var → Deploy |
 
-1. New Project on Vercel, point it at `frontend/`
-2. Framework preset: Vite
-3. Add `VITE_API_URL` env var pointing to your Render backend URL
-4. Deploy
+---
 
-## Environment Variables
+## 🔑 Environment Variables
 
-**backend/.env**
-```
+**`backend/.env`**
+```env
 PORT=5000
 NODE_ENV=production
 CLIENT_URL=https://your-frontend.vercel.app
@@ -123,42 +156,43 @@ CLOUDINARY_API_SECRET=...
 BCRYPT_SALT_ROUNDS=12
 RATE_LIMIT_WINDOW_MS=900000
 RATE_LIMIT_MAX=100
+LOCKDROP_SECRET=...
 ```
 
-**frontend/.env**
-```
+**`frontend/.env`**
+```env
 VITE_API_URL=https://your-backend.onrender.com
 ```
 
-## API Reference
+---
 
-| Method | Route             | Description                                                |
-|--------|-------------------|--------------------------------------------------------------|
-| POST   | `/upload`         | multipart form: `files`, `password`, `expiry`, optional `customDate`, `isFolder`, `folderName` |
-| POST   | `/verify`         | JSON: `{ password }` → returns file metadata + an id        |
-| GET    | `/download/:id`   | streams the file, increments `downloadCount`                |
-| GET    | `/health`         | health check                                                 |
+## 📡 API Reference
 
-Expired files are swept automatically every 5 minutes — no dedicated delete
-endpoint is exposed publicly.
+| Method | Route | Description |
+|---|---|---|
+| `POST` | `/upload` | multipart form: `files`, `password`, `expiry`, optional `customDate`, `isFolder`, `folderName` |
+| `POST` | `/verify` | JSON `{ password }` → returns file metadata + an id |
+| `GET` | `/download/:id` | streams the file, increments `downloadCount` |
+| `GET` | `/health` | health check |
 
-## Security Notes
+> Expired files are swept automatically every 5 minutes — no dedicated delete endpoint is exposed publicly.
 
-- Helmet sets secure HTTP headers; CORS is locked to `CLIENT_URL`
-- Separate, stricter rate limits on `/upload` and `/verify` to slow abuse/brute-force
-- Filenames are sanitized (basename-only, character allowlist) to prevent
-  directory traversal inside generated zip archives
-- Passwords are validated for length and bcrypt-hashed (never logged, never
-  stored in plain text)
-- The password-uniqueness/lookup approach compares against all *active*
-  uploads only — expired ones are excluded automatically once swept
+---
 
-## Notes on the Puppy Mascot
+## 🛡️ Security Notes
 
-The mascot (`frontend/src/components/Puppy.jsx`) is built with emoji + CSS/
-Framer Motion so the project runs with **zero external animation assets**.
-It already exposes a `state` prop (`idle`, `covering`, `happy`, `sad`,
-`jump`, `celebrate`) — swap the inner markup for a real `<Lottie
-animationData={...} />` per state if you want richer animation; the wiring
-in `Upload.jsx` and `Download.jsx` (focus → covering, success → happy/jump,
-error → sad, download → celebrate) needs no changes.
+- ✅ Helmet sets secure HTTP headers; CORS is locked to `CLIENT_URL`
+- ✅ Separate, stricter rate limits on `/upload` and `/verify` to slow abuse/brute-force
+- ✅ Filenames are sanitized (basename-only, character allowlist) to prevent directory traversal
+- ✅ Passwords are bcrypt-hashed — never logged, never stored in plain text
+- ✅ Password lookup only compares against *active* (non-expired) uploads
+
+---
+
+<div align="center">
+
+Made with ❤️ by **Atanu Das**
+
+[![GitHub](https://img.shields.io/badge/GitHub-atanudas18-181717?style=flat-square&logo=github)](https://github.com/atanudas18)
+
+</div>
