@@ -27,7 +27,8 @@
 
 | Upload | Download |
 |---|---|
-| ![Upload screenshot placeholder](https://via.placeholder.com/560x350/0b0b1a/ffffff?text=Upload+Screen) | ![Download screenshot placeholder](https://via.placeholder.com/560x350/4c1d95/ffffff?text=Download+Screen) |
+| <img width="524" height="628" alt="upload-screen" src="https://github.com/user-attachments/assets/eb8cd53c-119d-4c7d-a061-75d06e5a6054" /> |<img width="454" height="446" alt="download-screen" src="https://github.com/user-attachments/assets/fe667b49-f545-4e8e-9108-dd5a926e46b1" />
+ |
 
 </div>
 
