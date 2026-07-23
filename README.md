@@ -264,4 +264,8 @@ This project is licensed under the **[MIT License](LICENSE)**.
 
 ⭐ **If you found this useful, consider giving it a star!**
 
+<<<<<<< HEAD
 </div>
+=======
+</div>
+>>>>>>> 926235bf180699719914295ea0892d293ff5ac97
