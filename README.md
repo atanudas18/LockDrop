@@ -1,10 +1,12 @@
 <div align="center">
+  <img src="./banner.png" alt="LockDrop banner" width="100%" />
+</div>
 
-# 🔒 LockDrop
+<div align="center">
 
-**Secure File Sharing Without Accounts**
+### 🔒 Secure File Sharing — No Accounts, No Sign-Up, Ever
 
-Upload a file, folder, or a batch of files, protect it with a password and an expiry, then share the password. No sign up, no login, no accounts — ever.
+*Upload a file, folder, or a batch of files → lock it with a password → share the password.*
 
 [![Live Demo](https://img.shields.io/badge/demo-live-brightgreen?style=for-the-badge)](https://mylockdrop.vercel.app)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](LICENSE)
@@ -17,26 +19,67 @@ Upload a file, folder, or a batch of files, protect it with a password and an ex
 
 ---
 
+### 🎬 Demo
+
+<div align="center">
+
+*(Add your screen-recording or screenshots here — see the note at the bottom of this section for exactly how.)*
+
+| Upload | Download |
+|---|---|
+| ![Upload screenshot placeholder](https://via.placeholder.com/560x350/0b0b1a/ffffff?text=Upload+Screen) | ![Download screenshot placeholder](https://via.placeholder.com/560x350/4c1d95/ffffff?text=Download+Screen) |
+
+</div>
+
+> 📸 **How to swap in your own screenshots/GIF (2 minutes, no extra tools):**
+> 1. On GitHub.com, open this README file and click the ✏️ pencil (edit) icon.
+> 2. Drag and drop a screenshot, GIF, or short screen-recording (`.mp4`/`.mov`/`.gif`) directly into the text box.
+> 3. GitHub auto-uploads it and inserts a link like `https://github.com/user-attachments/assets/...` — that's a permanent, free-hosted link.
+> 4. Replace the placeholder table above with that link, commit, done.
+
+---
+
 ## 📑 Table of Contents
 
 | | | |
 |---|---|---|
-| [✨ Features](#-features) | [🧰 Tech Stack](#-tech-stack) | [📂 Project Structure](#-project-structure) |
-| [⚙️ How It Works](#️-how-it-works) | [🚀 Local Setup](#-local-setup) | [☁️ Deployment](#️-deployment) |
-| [🔑 Environment Variables](#-environment-variables) | [📡 API Reference](#-api-reference) | [🛡️ Security Notes](#️-security-notes) |
+| [🧠 Overview](#-overview) | [✨ Features](#-features) | [🧰 Tech Stack](#-tech-stack) |
+| [⚙️ How It Works](#️-how-it-works) | [📂 Project Structure](#-project-structure) | [🚀 Local Setup](#-local-setup) |
+| [☁️ Deployment](#️-deployment) | [🔑 Environment Variables](#-environment-variables) | [📡 API Reference](#-api-reference) |
+| [🛡️ Security Notes](#️-security-notes) | [🗺️ Future Improvements](#️-future-improvements) | [🤝 Contributing](#-contributing) |
+
+---
+
+## 🧠 Overview
+
+**LockDrop** is a zero-account file-sharing tool. Instead of usernames and passwords tied to a person, **the password *is* the access key** — set one on upload, share it with whoever needs the file, and it works until it expires. No database of users, no login screen, no tracking who you are.
+
+Built to explore secure, ephemeral file transfer — password hashing, temporary cloud storage, automatic expiry, and folder zipping — without any of the usual account-management overhead.
 
 ---
 
 ## ✨ Features
 
-| Feature | Description |
+| | |
 |---|---|
-| 🔐 Password Protection | Every upload is locked behind a password — hashed with bcrypt, never stored in plain text |
-| 📁 Folder Uploads | Drag & drop an entire folder — it's zipped securely on the backend |
-| ⏳ Auto-Expiry | Set an expiry (1 hour → custom date); files self-destruct automatically |
-| 🙈 No Accounts | No sign up, no login — the password itself is the access key |
-| ⚡ Fast & Lightweight | React + Vite frontend, Express backend, zero bloat |
-| 🧹 Auto-Cleanup | A cron job sweeps expired files every 5 minutes — nothing lingers |
+| 🔐 **Password Protection** | Every upload is locked behind a password — hashed with bcrypt, never stored in plain text |
+| 📁 **Folder Uploads** | Drag & drop an entire folder — it's zipped securely on the backend before storage |
+| ⏳ **Auto-Expiry** | Set an expiry (1 hour → custom date); files self-destruct automatically, no manual cleanup |
+| 🙈 **Zero Accounts** | No sign up, no login, no personal data collected — the password is the only key |
+| ⚡ **Fast & Lightweight** | React + Vite frontend, Express backend — built for speed, not bloat |
+| 🧹 **Self-Cleaning** | A cron job sweeps expired files every 5 minutes so nothing lingers in storage |
+| 📊 **Live Upload Feedback** | Real-time progress bar with speed/ETA, plus a "finalizing" state for large folders |
+
+---
+
+## ⚙️ How It Works
+
+1. **Upload** — pick a file, multiple files, or a whole folder (zipped with `archiver` on the backend), set a password + expiry, hit upload. The password is bcrypt-hashed before it ever touches the database.
+2. **Share** — send the password to whoever needs the file, any way you like (chat, email, in person).
+3. **Download** — they open `/download`, enter the password. If it matches an active upload, they see the file's metadata (name, size, type, expiry, download count) and a download button.
+4. **Self-destruct** — a scheduled job sweeps every 5 minutes for anything past its expiry, deletes it from cloud storage, then removes its database record.
+
+> Because there are no accounts, `/verify` finds the right file by checking the submitted password against every *active* upload's bcrypt hash — the password itself is the lookup key.
 
 ---
 
@@ -74,25 +117,21 @@ lockdrop/
 │   ├── public/            # favicon, og-image, apple-touch-icon
 │   ├── index.html
 │   └── vercel.json
+├── LICENSE
 └── README.md
 ```
 
 ---
 
-## ⚙️ How It Works
-
-1. **Upload** — pick a file, multiple files, or a whole folder (folders are zipped securely on the backend using `archiver`), set a password and an expiry, and upload. The password is hashed with bcrypt before it ever touches the database.
-2. **Download** — anyone with the password opens `/download`, enters it, and if it matches an active upload, sees the file's metadata (name, size, type, upload date, expiry, download count) with a button to download.
-3. **Auto-delete** — a `node-cron` job sweeps every 5 minutes for uploads past their `expiresAt`, deletes the asset from Cloudinary, then removes the MongoDB document.
-
-> Because there are no user accounts, the **password itself is the lookup key** — `/verify` checks the submitted password against all active (non-expired) uploads' bcrypt hashes to find a match.
-
----
-
 ## 🚀 Local Setup
 
-### 1. Backend
+**Clone the repository**
+```bash
+git clone https://github.com/atanudas18/LockDrop.git
+cd LockDrop
+```
 
+**1. Backend**
 ```bash
 cd backend
 npm install
@@ -102,8 +141,7 @@ npm run dev
 ```
 Runs on `http://localhost:5000`
 
-### 2. Frontend
-
+**2. Frontend**
 ```bash
 cd frontend
 npm install
@@ -189,10 +227,41 @@ VITE_API_URL=https://your-backend.onrender.com
 
 ---
 
+## 🗺️ Future Improvements
+
+- 🔔 Optional email notification when a shared file is downloaded
+- 📈 Upload analytics dashboard (anonymous, per-link)
+- 🌍 Multi-language UI
+- 🖼️ Inline preview for images/PDFs before download
+- 🔗 Custom short links for shares
+
+---
+
+## 🤝 Contributing
+
+Contributions, issues, and feature requests are welcome!
+
+1. Fork the repository
+2. Create a branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m "Add your feature"`
+4. Push and open a Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the **[MIT License](LICENSE)**.
+
+---
+
 <div align="center">
 
-Made with ❤️ by **Atanu Das**
+### 👤 Author
+
+**Atanu Das**
 
 [![GitHub](https://img.shields.io/badge/GitHub-atanudas18-181717?style=flat-square&logo=github)](https://github.com/atanudas18)
+
+⭐ **If you found this useful, consider giving it a star!**
 
 </div>
