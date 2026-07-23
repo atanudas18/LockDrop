@@ -23,7 +23,7 @@
 
 <div align="center">
 
-*(Add your screen-recording or screenshots here — see the note at the bottom of this section for exactly how.)*
+
 
 | Upload | Download |
 |---|---|
